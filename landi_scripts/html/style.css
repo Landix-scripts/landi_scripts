@@ -1,0 +1,41 @@
+body {margin:0;font-family:Arial;}
+
+#bg {
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    display:none;
+}
+
+#menu {
+    display:none;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:500px;
+    background:#111;
+    padding:20px;
+    border-radius:12px;
+    color:white;
+}
+
+.card {
+    background:#1f1f1f;
+    margin:10px;
+    padding:15px;
+    border-radius:10px;
+}
+
+button {
+    background:#2b8cff;
+    border:none;
+    padding:8px;
+    color:white;
+    border-radius:6px;
+}
+
+button:disabled {
+    background:gray;
+}
