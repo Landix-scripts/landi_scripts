@@ -17,25 +17,13 @@ body {margin:0;font-family:Arial;}
     width:500px;
     background:#111;
     padding:20px;
-    border-radius:12px;
+    border-radius:10px;
     color:white;
 }
 
 .card {
-    background:#1f1f1f;
+    background:#222;
     margin:10px;
     padding:15px;
-    border-radius:10px;
-}
-
-button {
-    background:#2b8cff;
-    border:none;
-    padding:8px;
-    color:white;
-    border-radius:6px;
-}
-
-button:disabled {
-    background:gray;
+    border-radius:8px;
 }

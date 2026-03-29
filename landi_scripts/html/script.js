@@ -4,32 +4,37 @@ window.addEventListener("message", function(e){
     let d = e.data;
 
     if(d.type === "open"){
-        menu.style.display = "block";
-        bg.style.display = "block";
+        document.getElementById("menu").style.display = "block";
+        document.getElementById("bg").style.display = "block";
+    }
+
+    if(d.type === "close"){
+        document.getElementById("menu").style.display = "none";
+        document.getElementById("bg").style.display = "none";
     }
 
     if(d.type === "data"){
+        let list = document.getElementById("list");
         list.innerHTML = "";
 
         d.weapons.forEach(w => {
 
-            let locked = !w.unlocked;
+            let mats = "";
+            for(let m in w.materials){
+                mats += m + ": " + w.materials[m] + "<br>";
+            }
 
             list.innerHTML += `
             <div class="card">
                 <b>${w.label}</b><br>
+                XP: ${w.xp}/${w.needXP}<br>
+                ${mats}
 
-                XP: ${w.xp} / ${w.needXP}<br>
-
-                <button id="btn-${w.weapon}"
-                ${locked ? "disabled" : ""}
-                onclick="craft('${w.weapon}')">
-
-                ${locked ? "🔒 Locked" : "Craft"}
-
+                <button onclick="craft('${w.weapon}')">
+                Craft
                 </button>
 
-                <div id="timer-${w.weapon}" style="color:orange;"></div>
+                <div id="timer-${w.weapon}"></div>
             </div>`;
         });
     }
@@ -40,12 +45,8 @@ function craft(w){
 
     crafting = true;
 
-    let btn = document.getElementById("btn-" + w);
     let timer = document.getElementById("timer-" + w);
-
     let time = 5;
-
-    btn.disabled = true;
 
     let interval = setInterval(() => {
         timer.innerHTML = "⏳ " + time + "s";
@@ -59,8 +60,7 @@ function craft(w){
                 body:JSON.stringify({weapon:w})
             });
 
-            timer.innerHTML = "✅ Done";
-            btn.disabled = false;
+            timer.innerHTML = "Done";
             crafting = false;
         }
 
@@ -68,10 +68,16 @@ function craft(w){
 }
 
 function closeMenu(){
-    menu.style.display = "none";
-    bg.style.display = "none";
+    document.getElementById("menu").style.display = "none";
+    document.getElementById("bg").style.display = "none";
 
     fetch(`https://${GetParentResourceName()}/close`, {
         method:"POST"
     });
 }
+
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+        closeMenu();
+    }
+});

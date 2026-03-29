@@ -1,42 +1,55 @@
 local playerXP = {}
 
 local blueprints = {
-    ["WEAPON_PISTOL"] = {label="Pistol", needXP=0},
-    ["WEAPON_SMG"] = {label="SMG", needXP=10},
-    ["WEAPON_ASSAULTRIFLE"] = {label="AK47", needXP=20}
+    ["WEAPON_PISTOL"] = {
+        label="Pistol",
+        needXP=0,
+        materials = {iron=10, copper=5, gun_body=1, gun_trigger=1}
+    },
+    ["WEAPON_SMG"] = {
+        label="SMG",
+        needXP=10,
+        materials = {iron=20, copper=10, gun_body=2, gun_trigger=2, gun_barrel=1}
+    },
+    ["WEAPON_ASSAULTRIFLE"] = {
+        label="AK47",
+        needXP=20,
+        materials = {iron=30, copper=15, gun_body=3, gun_trigger=2, gun_barrel=2}
+    }
 }
 
-local isESX = GetResourceState("es_extended") == "started"
-local isQB = GetResourceState("qb-core") == "started"
+-- 🔍 CHECK MATERIALS
+function hasMaterials(src, materials)
+    for item, count in pairs(materials) do
+        local has = exports.ox_inventory:Search(src, 'count', item)
+        if has < count then
+            return false, item
+        end
+    end
+    return true
+end
 
-if isESX then ESX = exports["es_extended"]:getSharedObject() end
-if isQB then QBCore = exports['qb-core']:GetCoreObject() end
-
-RegisterNetEvent("craft:getData")
-AddEventHandler("craft:getData", function()
+RegisterNetEvent("craft:getData", function()
     local src = source
-
     if not playerXP[src] then playerXP[src] = 0 end
 
     local data = {}
 
     for weapon, info in pairs(blueprints) do
-        local unlocked = playerXP[src] >= info.needXP
-
         table.insert(data, {
             weapon = weapon,
             label = info.label,
             xp = playerXP[src],
             needXP = info.needXP,
-            unlocked = unlocked
+            unlocked = playerXP[src] >= info.needXP,
+            materials = info.materials
         })
     end
 
     TriggerClientEvent("craft:sendData", src, data)
 end)
 
-RegisterNetEvent("craft:weapon")
-AddEventHandler("craft:weapon", function(weapon)
+RegisterNetEvent("craft:weapon", function(weapon)
     local src = source
 
     if not playerXP[src] then playerXP[src] = 0 end
@@ -45,30 +58,28 @@ AddEventHandler("craft:weapon", function(weapon)
     if not r then return end
 
     if playerXP[src] < r.needXP then
-        TriggerClientEvent("esx:showNotification", src, "E bllokuar ❌")
+        TriggerClientEvent("ox_lib:notify", src, {description="Locked ❌"})
         return
     end
 
-    local time = 5
+    local has, missing = hasMaterials(src, r.materials)
 
-    SetTimeout(time * 1000, function()
+    if not has then
+        TriggerClientEvent("ox_lib:notify", src, {description="Missing: "..missing})
+        return
+    end
 
-        if isESX then
-            local xPlayer = ESX.GetPlayerFromId(src)
+    SetTimeout(5000, function()
 
-            if GetResourceState("ox_inventory") == "started" then
-                xPlayer.addInventoryItem(string.lower(weapon), 1)
-            else
-                xPlayer.addWeapon(weapon, 100)
-            end
-
-        elseif isQB then
-            local Player = QBCore.Functions.GetPlayer(src)
-            Player.Functions.AddItem(string.lower(weapon), 1)
+        for item, count in pairs(r.materials) do
+            exports.ox_inventory:RemoveItem(src, item, count)
         end
+
+        exports.ox_inventory:AddItem(src, string.lower(weapon), 1)
 
         playerXP[src] = playerXP[src] + 1
 
+        TriggerClientEvent("ox_lib:notify", src, {description="Craft done 🔥"})
         TriggerClientEvent("craft:refresh", src)
 
     end)
