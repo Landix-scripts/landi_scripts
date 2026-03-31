@@ -2,7 +2,6 @@ local craftingLocation = vector3(1752.0, 2534.45, 45.55)
 local inUI = false
 local cam = nil
 
--- 🧱 TABLE
 Citizen.CreateThread(function()
     local model = GetHashKey("prop_tool_bench02")
     RequestModel(model)
@@ -13,7 +12,6 @@ Citizen.CreateThread(function()
     FreezeEntityPosition(obj, true)
 end)
 
--- 🎮 OPEN MENU
 Citizen.CreateThread(function()
     while true do
         Wait(0)
@@ -45,7 +43,6 @@ Citizen.CreateThread(function()
     end
 end)
 
--- 🔴 ESC CLOSE FIX (FULL)
 Citizen.CreateThread(function()
     while true do
         Wait(0)

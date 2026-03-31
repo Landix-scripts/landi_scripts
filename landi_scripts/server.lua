@@ -18,7 +18,6 @@ local blueprints = {
     }
 }
 
--- 🔍 CHECK MATERIALS
 function hasMaterials(src, materials)
     for item, count in pairs(materials) do
         local has = exports.ox_inventory:Search(src, 'count', item)

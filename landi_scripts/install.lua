@@ -51,11 +51,6 @@
 },
 
 
--- ============================================
--- 🔫 WEAPON ITEMS (OX INVENTORY)
--- ============================================
-
--- ➤ Only needed if you use item-based weapons
 
 ['weapon_pistol'] = {
     label = 'Pistol',
@@ -94,11 +89,11 @@
 
 -- Give yourself items in-game:
 
--- /giveitem iron 50
--- /giveitem copper 50
--- /giveitem gun_body 5
--- /giveitem gun_trigger 5
--- /giveitem gun_barrel 5
+-- /giveitem me iron 50
+-- /giveitem me copper 50
+-- /giveitem me gun_body 5
+-- /giveitem me gun_trigger 5
+-- /giveitem me gun_barrel 5
 
 
 -- ============================================
